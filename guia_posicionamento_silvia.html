@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Posicionamento — Silvia Belluzzo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-mid: #AFA9EC;
+    --purple-dark: #3C3489;
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --teal-dark: #0F6E56;
+    --text: #1a1a1a;
+    --text-muted: #6b7280;
+    --text-hint: #9ca3af;
+    --bg: #f9fafb;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #0D1117;
+    padding: 1.5rem 1rem;
+    text-align: center;
+  }
+  header h1 { color: #F59E0B; font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  header h2 { color: #fff; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  header p { color: #9ca3af; font-size: 13px; }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .progress-labels span { font-size: 12px; color: var(--text-muted); }
+  .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--purple); border-radius: 99px; transition: width 0.35s ease; }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.75rem; }
+  .step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--purple); color: #fff; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-num.done { background: var(--teal); }
+  .step-info h3 { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .step-info p { font-size: 13px; color: var(--text-muted); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .card-label { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 5px; }
+  .card-hint { font-size: 13px; color: var(--text-hint); margin-bottom: 10px; line-height: 1.5; }
+
+  input[type=text], textarea, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type=text]:focus, textarea:focus { border-color: var(--purple); background: #fff; box-shadow: 0 0 0 3px rgba(83,74,183,0.1); }
+  textarea { resize: vertical; min-height: 80px; }
+  input[type=text] + input[type=text], input[type=text] + textarea { margin-top: 8px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .tag {
+    padding: 6px 14px; border-radius: 99px;
+    border: 1px solid var(--border-strong);
+    font-size: 13px; font-family: 'Inter', sans-serif;
+    cursor: pointer; color: var(--text-muted);
+    background: #fff; transition: all 0.12s;
+  }
+  .tag:hover { border-color: var(--purple-mid); color: var(--purple-dark); }
+  .tag.selected { background: var(--purple-light); border-color: var(--purple-mid); color: var(--purple-dark); font-weight: 500; }
+
+  .table-header { display: grid; gap: 8px; margin-bottom: 6px; }
+  .table-header span { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .table-row { display: grid; gap: 8px; margin-bottom: 8px; }
+  .cols-prio { grid-template-columns: minmax(0,1.4fr) minmax(0,2fr) minmax(0,1fr); }
+  .cols-canal { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .cols-grade { grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); }
+
+  .add-btn {
+    margin-top: 6px; font-size: 12px; padding: 5px 12px;
+    border: 1px dashed var(--border-strong); border-radius: var(--radius-sm);
+    background: transparent; color: var(--text-muted); cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .add-btn:hover { border-color: var(--purple-mid); color: var(--purple); }
+
+  .nav { display: flex; align-items: center; justify-content: space-between; margin-top: 2rem; gap: 10px; }
+  .nav-info { font-size: 13px; color: var(--text-muted); }
+
+  .btn {
+    padding: 10px 20px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif;
+    cursor: pointer; border: 1px solid var(--border-strong);
+    background: #fff; color: var(--text); transition: all 0.12s;
+  }
+  .btn:hover { background: var(--bg); border-color: var(--border-strong); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .btn-primary:hover { background: var(--purple-dark); border-color: var(--purple-dark); }
+  .btn-teal { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .btn-teal:hover { background: var(--teal-dark); }
+
+  /* RESULTADO */
+  .result-header { margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+  .result-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .result-header p { font-size: 13px; color: var(--text-muted); }
+  .result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem; }
+
+  .result-section-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 1.25rem 0 0.5rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+  .result-section-title:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .result-label { font-size: 11px; font-weight: 600; color: var(--purple); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+  .result-value { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+  .result-empty { font-size: 14px; color: var(--text-hint); font-style: italic; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; margin: 2px 3px 2px 0; }
+  .pill-purple { background: var(--purple-light); color: var(--purple-dark); }
+  .pill-teal { background: var(--teal-light); color: var(--teal-dark); }
+
+  .result-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .result-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .result-table td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text); }
+  .result-table tr:last-child td { border-bottom: none; }
+
+  .highlight-box { background: var(--purple-light); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .highlight-box .result-label { color: var(--purple-dark); }
+  .highlight-box .result-value { color: var(--purple-dark); font-weight: 500; font-size: 15px; }
+
+  footer { text-align: center; padding: 2rem 1rem; font-size: 12px; color: var(--text-hint); border-top: 1px solid var(--border); margin-top: 2rem; }
+  footer strong { color: var(--text-muted); }
+
+  @media print {
+    header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .nav, .result-actions, .add-btn, footer { display: none !important; }
+    .step { display: block !important; }
+    #step-result { display: block !important; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Guia de Estratégia</h1>
+  <h2>Crie seu Posicionamento</h2>
+  <p>Por Silvia Belluzzo &nbsp;·&nbsp; @silvia.belluzzo</p>
+</header>
+
+<div class="container">
+
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="prog-label">Etapa 1 de 6</span>
+      <span id="prog-pct">16%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:16%"></div></div>
+  </div>
+
+  <!-- ETAPA 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-header">
+      <div class="step-num" id="num-1">1</div>
+      <div class="step-info">
+        <h3>Clareza do propósito</h3>
+        <p>Etapa 1 de 6 — Planejamento</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Meta principal do negócio</p>
+      <p class="card-hint">Ex.: "Ser referência em cerimoniais e conquistar 5 novos contratos por mês"</p>
+      <textarea id="meta" placeholder="Escreva sua meta principal aqui..."></textarea>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Descrição do cliente ideal</p>
+      <p class="card-hint">Quem é a pessoa que você quer atender? Descreva em até 5 linhas.</p>
+      <textarea id="cliente" placeholder="Ex.: Noivas entre 28 e 40 anos, classe A/B, que valorizam personalização e experiência exclusiva..."></textarea>
+    </div>
+
+    <div class="card">
+      <p class="card-label">3 forças do seu negócio</p>
+      <p class="card-hint">O que você faz muito bem?</p>
+      <input type="text" id="forca1" placeholder="Força 1">
+      <input type="text" id="forca2" placeholder="Força 2" style="margin-top:8px">
+      <input type="text" id="forca3" placeholder="Força 3" style="margin-top:8px">
+    </div>
+
+    <div class="card">
+      <p class="card-label">Objeções mais comuns dos seus clientes</p>
+      <input type="text" id="obj1" placeholder="Objeção 1 — ex.: É caro demais">
+      <input type="text" id="obj2" placeholder="Objeção 2 — ex.: Não sei se preciso de um profissional" style="margin-top:8px">
+      <p class="card-hint" style="margin-top:10px">Como você responde a essas objeções?</p>
+      <textarea id="obj_resp" placeholder="Escreva como seu serviço resolve cada uma..." style="min-height:60px"></textarea>
+    </div>
+
+    <div class="nav">
+      <span></span>
+      <span class="nav-info">Passo 1 de 6</span>
+      <button class="btn btn-primary" onclick="goTo(2)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 2 -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <div class="step-num" id="num-2">2</div>
+      <div class="step-info">
+        <h3>Posicionamento do negócio</h3>
+        <p>Etapa 2 de 6 — Planejamento</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Como você quer ser lembrada?</p>
+      <p class="card-hint">Defina em uma frase curta como seu negócio deve ser percebido.</p>
+      <input type="text" id="lemb" placeholder="Ex.: A wedding planner que transforma sonhos em memórias inesquecíveis">
+    </div>
+
+    <div class="card">
+      <p class="card-label">O que te diferencia das demais?</p>
+      <p class="card-hint">Descreva em até 3 linhas seu diferencial real.</p>
+      <textarea id="diferencial" placeholder="Ex.: Atendo de forma completamente personalizada, com acompanhamento presencial em todas as etapas..."></textarea>
+    </div>
+
+    <div class="card">
+      <p class="card-label">3 atributos que deseja associar à sua marca</p>
+      <p class="card-hint">Selecione até 3 ou escreva o seu.</p>
+      <div class="tag-group" id="atrib-tags">
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Sofisticação</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Confiança</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Criatividade</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Atenção aos detalhes</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Agilidade</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Exclusividade</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Cuidado</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Resultado</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Elegância</button>
+        <button class="tag" onclick="toggleTag(this,'atrib-tags',3)">Humanidade</button>
+      </div>
+      <input type="text" id="atrib_custom" placeholder="Ou escreva o seu atributo..." style="margin-top:10px">
+    </div>
+
+    <div class="card">
+      <p class="card-label">Bio / perfil reformulada</p>
+      <p class="card-hint">Como você quer que sua bio do Instagram ou site descreva o que você faz?</p>
+      <textarea id="bio" placeholder="Ex.: Wedding planner especializada em casamentos íntimos e personalizados no interior de SP | Cada detalhe conta"></textarea>
+    </div>
+
+    <div class="nav">
+      <button class="btn" onclick="goTo(1)">← Voltar</button>
+      <span class="nav-info">Passo 2 de 6</span>
+      <button class="btn btn-primary" onclick="goTo(3)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 3 -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <div class="step-num" id="num-3">3</div>
+      <div class="step-info">
+        <h3>Canais de comunicação</h3>
+        <p>Etapa 3 de 6 — Planejamento</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Onde você está presente hoje?</p>
+      <div class="tag-group" id="canal-tags">
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">Instagram</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">WhatsApp</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">TikTok</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">Site / Blog</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">Pinterest</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">YouTube</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">Panfletos</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">Indicações</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">Eventos</button>
+        <button class="tag" onclick="toggleTag(this,'canal-tags',99)">E-mail / Newsletter</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Diagnóstico de canais</p>
+      <p class="card-hint">Para cada canal, anote pontos fortes, fracos e oportunidades.</p>
+      <div class="table-header cols-canal">
+        <span>Canal</span><span>Pontos fortes</span><span>Pontos fracos</span><span>Oportunidade</span>
+      </div>
+      <div id="canal-rows">
+        <div class="table-row cols-canal">
+          <input type="text" placeholder="Ex.: Instagram">
+          <input type="text" placeholder="Ex.: Bom engajamento">
+          <input type="text" placeholder="Ex.: Sem constância">
+          <input type="text" placeholder="Ex.: Reels semanais">
+        </div>
+        <div class="table-row cols-canal">
+          <input type="text" placeholder="Canal 2">
+          <input type="text" placeholder=""><input type="text" placeholder=""><input type="text" placeholder="">
+        </div>
+      </div>
+      <button class="add-btn" onclick="addRow('canal-rows','cols-canal',['Canal','Fortes','Fracos','Oportunidade'])">+ Adicionar canal</button>
+    </div>
+
+    <div class="nav">
+      <button class="btn" onclick="goTo(2)">← Voltar</button>
+      <span class="nav-info">Passo 3 de 6</span>
+      <button class="btn btn-primary" onclick="goTo(4)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 4 -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <div class="step-num" id="num-4">4</div>
+      <div class="step-info">
+        <h3>Linha editorial e conteúdo</h3>
+        <p>Etapa 4 de 6 — Planejamento</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Temas que posso abordar</p>
+      <p class="card-hint">O que você pode falar que o seu público valoriza?</p>
+      <textarea id="temas" placeholder="Ex.: Bastidores de eventos, dicas para noivas, erros comuns, tendências de decoração, depoimentos de clientes..."></textarea>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Formatos que funcionam para você</p>
+      <div class="tag-group" id="formato-tags">
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Reels</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Carrossel</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Stories</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Foto estática</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Vídeo longo</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Post educativo</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Bastidores</button>
+        <button class="tag" onclick="toggleTag(this,'formato-tags',99)">Depoimento</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Frequência e canal principal</p>
+      <div class="grid-2">
+        <div>
+          <p class="card-hint">Frequência mínima que consigo manter</p>
+          <input type="text" id="freq" placeholder="Ex.: 3x por semana">
+        </div>
+        <div>
+          <p class="card-hint">Canal principal de conteúdo</p>
+          <input type="text" id="canal_principal" placeholder="Ex.: Instagram">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Tom de voz da marca</p>
+      <p class="card-hint">Escolha até 3 que representam como você se comunica.</p>
+      <div class="tag-group" id="tom-tags">
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Acolhedor</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Sofisticado</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Descontraído</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Inspirador</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Didático</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Próximo</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Especialista</button>
+        <button class="tag" onclick="toggleTag(this,'tom-tags',3)">Empático</button>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" onclick="goTo(3)">← Voltar</button>
+      <span class="nav-info">Passo 4 de 6</span>
+      <button class="btn btn-primary" onclick="goTo(5)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 5 -->
+  <div class="step" id="step-5">
+    <div class="step-header">
+      <div class="step-num" id="num-5">5</div>
+      <div class="step-info">
+        <h3>Prioridades e prazos</h3>
+        <p>Etapa 5 de 6 — Planejamento</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Suas 3 prioridades agora</p>
+      <p class="card-hint">Escolha um canal de venda, um de relacionamento e uma frente de conteúdo para fortalecer primeiro.</p>
+      <div class="table-header cols-prio">
+        <span>Prioridade</span><span>Objetivo</span><span>Prazo</span>
+      </div>
+      <div id="prio-rows">
+        <div class="table-row cols-prio">
+          <input type="text" placeholder="Ex.: Canal de venda">
+          <input type="text" placeholder="Ex.: Melhorar Instagram">
+          <input type="text" placeholder="3 meses">
+        </div>
+        <div class="table-row cols-prio">
+          <input type="text" placeholder="Ex.: Relacionamento">
+          <input type="text" placeholder="Ex.: Grupo no WhatsApp">
+          <input type="text" placeholder="1 mês">
+        </div>
+        <div class="table-row cols-prio">
+          <input type="text" placeholder="Ex.: Conteúdo">
+          <input type="text" placeholder="Ex.: Postar 3x/semana">
+          <input type="text" placeholder="Imediato">
+        </div>
+      </div>
+      <button class="add-btn" onclick="addRow('prio-rows','cols-prio',['Prioridade','Objetivo','Prazo'])">+ Adicionar prioridade</button>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Sistema de acompanhamento</p>
+      <p class="card-hint">Como você vai monitorar seu progresso? (ex.: planilha semanal, agenda, app)</p>
+      <input type="text" id="sistema" placeholder="Ex.: Planilha no Google Sheets revisada toda segunda-feira">
+    </div>
+
+    <div class="nav">
+      <button class="btn" onclick="goTo(4)">← Voltar</button>
+      <span class="nav-info">Passo 5 de 6</span>
+      <button class="btn btn-primary" onclick="goTo(6)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 6 -->
+  <div class="step" id="step-6">
+    <div class="step-header">
+      <div class="step-num" id="num-6">6</div>
+      <div class="step-info">
+        <h3>Grade editorial</h3>
+        <p>Etapa 6 de 6 — Conteúdo em ação</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-label">Planeje seus próximos conteúdos</p>
+      <p class="card-hint">Preencha pelo menos 3 ideias para começar com consistência.</p>
+      <div class="table-header cols-grade">
+        <span>Título / tema</span><span>Formato</span><span>Data</span><span>CTA</span>
+      </div>
+      <div id="grade-rows">
+        <div class="table-row cols-grade">
+          <input type="text" placeholder="Ex.: 3 erros que noivas cometem" style="font-size:13px">
+          <input type="text" placeholder="Reels" style="font-size:13px">
+          <input type="text" placeholder="01/07" style="font-size:13px">
+          <input type="text" placeholder="Salve!" style="font-size:13px">
+        </div>
+        <div class="table-row cols-grade">
+          <input type="text" placeholder="Ideia 2" style="font-size:13px">
+          <input type="text" placeholder="" style="font-size:13px">
+          <input type="text" placeholder="" style="font-size:13px">
+          <input type="text" placeholder="" style="font-size:13px">
+        </div>
+        <div class="table-row cols-grade">
+          <input type="text" placeholder="Ideia 3" style="font-size:13px">
+          <input type="text" placeholder="" style="font-size:13px">
+          <input type="text" placeholder="" style="font-size:13px">
+          <input type="text" placeholder="" style="font-size:13px">
+        </div>
+      </div>
+      <button class="add-btn" onclick="addRow('grade-rows','cols-grade',['Título','Formato','Data','CTA'])">+ Adicionar conteúdo</button>
+    </div>
+
+    <div class="nav">
+      <button class="btn" onclick="goTo(5)">← Voltar</button>
+      <span class="nav-info">Passo 6 de 6</span>
+      <button class="btn btn-teal" onclick="showResult()">✓ Ver meu plano</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="step" id="step-result">
+    <div class="result-header">
+      <h2>Seu plano de posicionamento</h2>
+      <p>Resumo gerado a partir das suas respostas</p>
+      <div class="result-actions">
+        <button class="btn" onclick="downloadPDF()">⬇ Baixar PDF</button>
+        <button class="btn" onclick="downloadTXT()">⬇ Baixar .txt</button>
+        <button class="btn" onclick="goTo(1)">✎ Editar respostas</button>
+      </div>
+    </div>
+
+    <p class="result-section-title">Etapa 1 — Propósito</p>
+
+    <div class="highlight-box">
+      <p class="result-label">Meta principal</p>
+      <p class="result-value" id="r-meta"></p>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Cliente ideal</p>
+      <p class="result-value" id="r-cliente"></p>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Forças do negócio</p>
+      <div id="r-forcas"></div>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Resposta às objeções</p>
+      <p class="result-value" id="r-obj"></p>
+    </div>
+
+    <p class="result-section-title">Etapa 2 — Posicionamento</p>
+
+    <div class="highlight-box">
+      <p class="result-label">Como você quer ser lembrada</p>
+      <p class="result-value" id="r-lemb"></p>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Diferencial</p>
+      <p class="result-value" id="r-dif"></p>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Atributos da marca</p>
+      <div id="r-atrib"></div>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Bio / perfil</p>
+      <p class="result-value" id="r-bio"></p>
+    </div>
+
+    <p class="result-section-title">Etapa 3 — Canais</p>
+
+    <div class="result-card">
+      <p class="result-label">Canais onde está presente</p>
+      <div id="r-canais"></div>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Diagnóstico de canais</p>
+      <div id="r-canal-diag"></div>
+    </div>
+
+    <p class="result-section-title">Etapa 4 — Conteúdo</p>
+
+    <div class="result-card">
+      <p class="result-label">Temas de conteúdo</p>
+      <p class="result-value" id="r-temas"></p>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Formatos selecionados</p>
+      <div id="r-formatos"></div>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Frequência e canal principal</p>
+      <p class="result-value" id="r-freq"></p>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Tom de voz</p>
+      <div id="r-tom"></div>
+    </div>
+
+    <p class="result-section-title">Etapa 5 — Prioridades</p>
+
+    <div class="result-card">
+      <p class="result-label">Suas prioridades</p>
+      <div id="r-prios"></div>
+    </div>
+
+    <div class="result-card">
+      <p class="result-label">Sistema de acompanhamento</p>
+      <p class="result-value" id="r-sistema"></p>
+    </div>
+
+    <p class="result-section-title">Etapa 6 — Grade editorial</p>
+
+    <div class="result-card">
+      <p class="result-label">Conteúdos planejados</p>
+      <div id="r-grade"></div>
+    </div>
+
+    <div class="result-actions" style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border);">
+      <button class="btn btn-primary" onclick="downloadPDF()">⬇ Baixar PDF</button>
+      <button class="btn" onclick="downloadTXT()">⬇ Baixar .txt</button>
+      <button class="btn" onclick="goTo(1)">✎ Editar respostas</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Desenvolvido para as aulas de <strong>Silvia Belluzzo</strong> &nbsp;·&nbsp; @silvia.belluzzo
+</footer>
+
+<script>
+var current = 1;
+var TOTAL = 6;
+
+function goTo(n) {
+  var prev = document.getElementById(current === 'result' ? 'step-result' : 'step-' + current);
+  if (prev) prev.classList.remove('active');
+  if (current !== 'result' && current <= TOTAL) {
+    var num = document.getElementById('num-' + current);
+    if (num) num.classList.add('done');
+  }
+  current = n;
+  var next = document.getElementById('step-' + n);
+  if (next) next.classList.add('active');
+  var pct = Math.round((n / TOTAL) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Etapa ' + n + ' de ' + TOTAL;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleTag(el, groupId, max) {
+  var selected = document.querySelectorAll('#' + groupId + ' .tag.selected');
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+  } else {
+    if (selected.length >= max) return;
+    el.classList.add('selected');
+  }
+}
+
+function getSelected(groupId) {
+  return Array.from(document.querySelectorAll('#' + groupId + ' .tag.selected')).map(function(t) { return t.textContent.trim(); });
+}
+
+function addRow(containerId, colClass, placeholders) {
+  var row = document.createElement('div');
+  row.className = 'table-row ' + colClass;
+  placeholders.forEach(function(ph) {
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = ph;
+    inp.style.fontSize = '13px';
+    row.appendChild(inp);
+  });
+  document.getElementById(containerId).appendChild(row);
+}
+
+function v(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function setVal(id, text, fallback) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  if (text) { el.className = 'result-value'; el.textContent = text; }
+  else { el.className = 'result-empty'; el.textContent = fallback || 'Não preenchido'; }
+}
+
+function setPills(id, arr, cls) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  if (!arr.length) { el.innerHTML = '<p class="result-empty">Não preenchido</p>'; return; }
+  el.innerHTML = arr.map(function(a) { return '<span class="pill ' + (cls || 'pill-purple') + '">' + a + '</span>'; }).join('');
+}
+
+function showResult() {
+  var prev = document.getElementById('step-' + current);
+  if (prev) prev.classList.remove('active');
+  var num = document.getElementById('num-' + current);
+  if (num) num.classList.add('done');
+  current = 'result';
+  document.getElementById('step-result').classList.add('active');
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-label').textContent = 'Plano concluído';
+  document.getElementById('prog-pct').textContent = '100%';
+
+  setVal('r-meta', v('meta'));
+  setVal('r-cliente', v('cliente'));
+
+  var forcas = [v('forca1'), v('forca2'), v('forca3')].filter(Boolean);
+  setPills('r-forcas', forcas);
+
+  var objLine = [v('obj1'), v('obj2')].filter(Boolean).join(' / ');
+  var resp = v('obj_resp');
+  var objFull = (objLine ? 'Objeções: ' + objLine : '') + (resp ? (objLine ? '\nComo respondo: ' : '') + resp : '');
+  setVal('r-obj', objFull);
+
+  setVal('r-lemb', v('lemb'));
+  setVal('r-dif', v('diferencial'));
+
+  var atribs = getSelected('atrib-tags');
+  var cust = v('atrib_custom');
+  if (cust) atribs.push(cust);
+  setPills('r-atrib', atribs);
+
+  setVal('r-bio', v('bio'));
+
+  setPills('r-canais', getSelected('canal-tags'), 'pill-teal');
+
+  var diagRows = document.querySelectorAll('#canal-rows .table-row');
+  var diagHTML = '<table class="result-table"><thead><tr><th>Canal</th><th>Fortes</th><th>Fracos</th><th>Oportunidade</th></tr></thead><tbody>';
+  var hasDiag = false;
+  diagRows.forEach(function(row) {
+    var ins = row.querySelectorAll('input');
+    if (ins[0] && ins[0].value.trim()) {
+      hasDiag = true;
+      diagHTML += '<tr>';
+      Array.from(ins).forEach(function(inp) { diagHTML += '<td>' + (inp.value.trim() || '—') + '</td>'; });
+      diagHTML += '</tr>';
+    }
+  });
+  diagHTML += '</tbody></table>';
+  document.getElementById('r-canal-diag').innerHTML = hasDiag ? diagHTML : '<p class="result-empty">Não preenchido</p>';
+
+  setVal('r-temas', v('temas'));
+  setPills('r-formatos', getSelected('formato-tags'));
+
+  var freqLine = [v('freq') ? 'Frequência: ' + v('freq') : '', v('canal_principal') ? 'Canal: ' + v('canal_principal') : ''].filter(Boolean).join('  ·  ');
+  setVal('r-freq', freqLine);
+
+  setPills('r-tom', getSelected('tom-tags'));
+
+  var prioRows = document.querySelectorAll('#prio-rows .table-row');
+  var prioHTML = '<table class="result-table"><thead><tr><th>Prioridade</th><th>Objetivo</th><th>Prazo</th></tr></thead><tbody>';
+  var hasPrio = false;
+  prioRows.forEach(function(row) {
+    var ins = row.querySelectorAll('input');
+    if (ins[0] && ins[0].value.trim()) {
+      hasPrio = true;
+      prioHTML += '<tr>';
+      Array.from(ins).forEach(function(inp) { prioHTML += '<td>' + (inp.value.trim() || '—') + '</td>'; });
+      prioHTML += '</tr>';
+    }
+  });
+  prioHTML += '</tbody></table>';
+  document.getElementById('r-prios').innerHTML = hasPrio ? prioHTML : '<p class="result-empty">Não preenchido</p>';
+
+  setVal('r-sistema', v('sistema'));
+
+  var gradeRows = document.querySelectorAll('#grade-rows .table-row');
+  var gradeHTML = '<table class="result-table"><thead><tr><th>Título / tema</th><th>Formato</th><th>Data</th><th>CTA</th></tr></thead><tbody>';
+  var hasGrade = false;
+  gradeRows.forEach(function(row) {
+    var ins = row.querySelectorAll('input');
+    if (ins[0] && ins[0].value.trim()) {
+      hasGrade = true;
+      gradeHTML += '<tr>';
+      Array.from(ins).forEach(function(inp) { gradeHTML += '<td>' + (inp.value.trim() || '—') + '</td>'; });
+      gradeHTML += '</tr>';
+    }
+  });
+  gradeHTML += '</tbody></table>';
+  document.getElementById('r-grade').innerHTML = hasGrade ? gradeHTML : '<p class="result-empty">Não preenchido</p>';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildText() {
+  var lines = [];
+  lines.push('PLANO DE POSICIONAMENTO');
+  lines.push('Por Silvia Belluzzo | @silvia.belluzzo');
+  lines.push('='.repeat(40));
+  lines.push('');
+  lines.push('META PRINCIPAL');
+  lines.push(v('meta') || '-');
+  lines.push('');
+  lines.push('CLIENTE IDEAL');
+  lines.push(v('cliente') || '-');
+  lines.push('');
+  lines.push('FORÇAS DO NEGÓCIO');
+  lines.push([v('forca1'), v('forca2'), v('forca3')].filter(Boolean).join(' / ') || '-');
+  lines.push('');
+  lines.push('OBJEÇÕES E RESPOSTAS');
+  lines.push([v('obj1'), v('obj2')].filter(Boolean).join(' / ') || '-');
+  if (v('obj_resp')) lines.push('Resposta: ' + v('obj_resp'));
+  lines.push('');
+  lines.push('COMO QUER SER LEMBRADA');
+  lines.push(v('lemb') || '-');
+  lines.push('');
+  lines.push('DIFERENCIAL');
+  lines.push(v('diferencial') || '-');
+  lines.push('');
+  lines.push('ATRIBUTOS DA MARCA');
+  var atribs = getSelected('atrib-tags');
+  if (v('atrib_custom')) atribs.push(v('atrib_custom'));
+  lines.push(atribs.join(', ') || '-');
+  lines.push('');
+  lines.push('BIO / PERFIL');
+  lines.push(v('bio') || '-');
+  lines.push('');
+  lines.push('CANAIS');
+  lines.push(getSelected('canal-tags').join(', ') || '-');
+  lines.push('');
+  lines.push('TEMAS DE CONTEÚDO');
+  lines.push(v('temas') || '-');
+  lines.push('');
+  lines.push('FORMATOS');
+  lines.push(getSelected('formato-tags').join(', ') || '-');
+  lines.push('');
+  lines.push('FREQUÊNCIA: ' + (v('freq') || '-') + '  |  CANAL: ' + (v('canal_principal') || '-'));
+  lines.push('');
+  lines.push('TOM DE VOZ');
+  lines.push(getSelected('tom-tags').join(', ') || '-');
+  lines.push('');
+  lines.push('SISTEMA DE ACOMPANHAMENTO');
+  lines.push(v('sistema') || '-');
+  return lines.join('\n');
+}
+
+function downloadTXT() {
+  var text = buildText();
+  var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'plano-posicionamento-silvia-belluzzo.txt';
+  a.click();
+}
+
+function downloadPDF() {
+  window.print();
+}
+</script>
+
+</body>
+</html>
